@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -58,6 +59,7 @@ func main() {
 	addCmd := flag.NewFlagSet("add", flag.ExitOnError)
 	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
 	checkCmd := flag.NewFlagSet("check", flag.ExitOnError)
+	deleteCmd := flag.NewFlagSet("delete", flag.ExitOnError)
 
 	switch os.Args[1] {
 	case "add":
@@ -89,7 +91,55 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+		printTodos(todos)
 
+	case "delete":
+		deleteCmd.Parse(os.Args[2:])
+		deleteArgs := deleteCmd.Args()
+		if len(deleteArgs) < 1 {
+			fmt.Println("usage: todo delete 1,2 ..")
+			os.Exit(1)
+		}
+
+		// Parse and validate indices
+		deleteArgFields := strings.Split(strings.Join(deleteArgs, ""), ",")
+		var indices []int
+		for _, v := range deleteArgFields {
+			idx, err := strconv.Atoi(strings.TrimSpace(v))
+			if err != nil {
+				fmt.Printf("Invalid arg: %v\n", v)
+				os.Exit(1)
+			}
+			indices = append(indices, idx-1) // Convert to 0-based
+		}
+
+		todos, err := loadTodos(fileName)
+		if err != nil {
+			panic(err)
+		}
+
+		// Validate all indices before deleting
+		for _, idx := range indices {
+			if idx < 0 || idx >= len(todos) {
+				fmt.Printf("Not a valid delete number (%d-%d are valid)\n", 1, len(todos))
+				os.Exit(1)
+			}
+		}
+
+		// Sort indices in descending order to avoid shifting
+		slices.Sort(indices)
+		slices.Reverse(indices)
+
+		// Delete todos at specified indices
+		for _, idx := range indices {
+			todos = slices.Delete(todos, idx, idx+1)
+		}
+
+		err = saveTodos(fileName, todos)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("Updated todo list:")
 		printTodos(todos)
 
 	case "check":

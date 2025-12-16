@@ -1,10 +1,10 @@
 [
 	{
-		"Text": "walk dog",
-		"Done": true
-	},
-	{
 		"Text": "walk cat",
 		"Done": false
+	},
+	{
+		"Text": "walk dog",
+		"Done": true
 	}
 ]
