@@ -52,7 +52,7 @@ func printTodos(todos []Todo) {
 func main() {
 	fileName := "todos.json"
 	if len(os.Args) < 2 {
-		fmt.Println("expcted 'add' or 'list' subcommand")
+		fmt.Println("expcted 'add', 'list', 'check' or 'delete' subcommand")
 		os.Exit(1)
 	}
 

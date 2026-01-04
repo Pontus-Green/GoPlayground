@@ -6,5 +6,9 @@
 	{
 		"Text": "walk dog",
 		"Done": true
+	},
+	{
+		"Text": "walk myself",
+		"Done": true
 	}
 ]
